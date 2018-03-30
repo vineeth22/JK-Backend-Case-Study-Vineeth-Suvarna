@@ -1,0 +1,22 @@
+{
+  "name": "jk-backend-case-study-vineeth-suvarna",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vineeth22/JK-Backend-Case-Study-Vineeth-Suvarna.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vineeth22/JK-Backend-Case-Study-Vineeth-Suvarna/issues"
+  },
+  "homepage": "https://github.com/vineeth22/JK-Backend-Case-Study-Vineeth-Suvarna#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
