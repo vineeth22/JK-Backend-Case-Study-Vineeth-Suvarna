@@ -39,7 +39,7 @@ const getUser = (userId, users, func) => {
   if (index !== -1) {
     func(users[index]);
   } else {
-    func('User does not exist');
+    func(undefined);
   }
 };
 
@@ -56,6 +56,16 @@ const getWords = (n, chars, func) => {
   func(words);
 };
 
+const makeResponse = (success, message, data, timestamp, path, func) => {
+  let response = {};
+  response.success = success;
+  response.message = message;
+  response.data = data;
+  response.timestamp = timestamp;
+  response.path = path;
+  func(response);
+};
+
 let url = 'https://shielded-headland-24739.herokuapp.com/static/users.txt';
 
 router.get('/', (req, res) => {
@@ -64,14 +74,18 @@ router.get('/', (req, res) => {
   data.valid_api_endpoints_url = '/';
   data.fetch_users_url = '/users';
   data.fetch_users_by_user_id_url = '/users/{user_id}';
-  data.generate_random_words_url = '/words?q={query}{&chars,n}';
-  res.send(data);
+  data.generate_random_words_url = '/data?q={query}{&chars,n}';
+  makeResponse(true, 'OK', data, Date.now(), '/', (response) => {
+    res.send(response);
+  });
 });
 
 router.get('/users', (req, res) => {
   fetchData(url, (data) => {
     parseData(data, (users) => {
-      res.send(users);
+      makeResponse(true, 'OK', users, Date.now(), '/users', (response) => {
+        res.send(response);
+      });
     });
   });
 });
@@ -81,7 +95,15 @@ router.get('/users/:user_id', (req, res) => {
     parseData(data, (users) => {
       let userId = req.params.user_id;
       getUser(userId, users, (user) => {
-        res.send(user);
+        if (user === undefined) {
+          makeResponse(false, 'User does not exist', undefined, Date.now(), '/users/{user_id}', (response) => {
+            res.send(response);
+          });
+        } else {
+          makeResponse(true, 'OK', user, Date.now(), '/users/{user_id}', (response) => {
+            res.send(response);
+          });
+        }
       });
     });
   });
@@ -95,10 +117,14 @@ router.get('/data', (req, res) => {
   if (ntest.test(n) && chartest.test(chars)) {
     n = parseInt(n, 10);
     getWords(n, chars, (words) => {
-      res.send(words);
+      makeResponse(true, 'OK', words, Date.now(), '/data?q={query}{&chars,n}', (response) => {
+        res.send(response);
+      });
     });
   } else {
-    res.send('Invalid parameters');
+    makeResponse(false, 'Invalid parameters', undefined, Date.now(), '/data?q={query}{&chars,n}', (response) => {
+      res.send(response);
+    });
   }
 });
 
